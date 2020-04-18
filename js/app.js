@@ -12,7 +12,6 @@ let flappy = (function () {
     update() {
       this.speed += this.gravity;
       this.y += this.speed;
-      console.log(this.speed);
     },
     draw() {
       context.beginPath();
@@ -88,6 +87,24 @@ let flappy = (function () {
     },
   };
 
+  const startScreen = {
+    y: 120,
+    title: "Welcome!",
+    subtitle: "Tap to start",
+    draw() {
+      this.centerText(this.title, "bold 50px sans-serif", this.y);
+      this.centerText(this.subtitle, "30px sans-serif", this.y + 120);
+    },
+    centerText(text, fontStyle, y) {
+      context.font = fontStyle;
+      context.fillStyle = "#c05621";
+
+      const textMeasure = context.measureText(this.title);
+
+      context.fillText(text, (canvas.width - textMeasure.width) / 2, y);
+    },
+  };
+
   let loop = function () {
     bg.init();
     floor.init();
@@ -95,6 +112,8 @@ let flappy = (function () {
     bg.draw();
     floor.draw();
     flappyBird.draw();
+
+    startScreen.draw();
 
     flappyBird.update();
 
