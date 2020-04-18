@@ -105,17 +105,49 @@ let flappy = (function () {
     },
   };
 
+  //Screens
+  const screens = {
+    active: null,
+    start: {
+      draw() {
+        bg.draw();
+        floor.draw();
+        flappyBird.draw();
+        startScreen.draw();
+      },
+      click() {
+        screens.activate(screens.game);
+      },
+    },
+    game: {
+      draw() {
+        bg.draw();
+        floor.draw();
+        flappyBird.draw();
+      },
+      update() {
+        flappyBird.update();
+      },
+    },
+    activate(newScreen) {
+      this.active = newScreen;
+    },
+  };
+
+  //Interaction
+  const interaction = {
+    init() {
+      document.addEventListener("click", this.click);
+    },
+    click(e) {
+      if (screens.active.click) screens.active.click();
+    },
+  };
+
   let loop = function () {
-    bg.init();
-    floor.init();
+    screens.active.draw();
 
-    bg.draw();
-    floor.draw();
-    flappyBird.draw();
-
-    startScreen.draw();
-
-    flappyBird.update();
+    if (screens.active.update) screens.active.update();
 
     requestAnimationFrame(loop);
   };
@@ -124,6 +156,13 @@ let flappy = (function () {
     init() {
       canvas = document.querySelector("#game-canvas");
       context = canvas.getContext("2d");
+
+      interaction.init();
+
+      bg.init();
+      floor.init();
+
+      screens.activate(screens.start);
 
       requestAnimationFrame(loop);
     },
