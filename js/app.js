@@ -240,7 +240,16 @@ let flappy = (function () {
         "repeat"
       );
 
-      pattern.setTransform(new DOMMatrix().translateSelf(this.x, 0, 0));
+      try {
+        pattern.setTransform(new DOMMatrix().translateSelf(this.x, 0, 0));
+      } catch (e) {
+        pattern.setTransform(
+          document
+            .createElementNS("http://www.w3.org/2000/svg", "svg")
+            .createSVGMatrix()
+            .translate(this.x, 0, 0)
+        );
+      }
 
       context.fillStyle = pattern;
       context.fillRect(this.x, this.y, this.width, this.grassHeight);
