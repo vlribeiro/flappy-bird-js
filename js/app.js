@@ -1,6 +1,17 @@
 let flappy = (function () {
   let canvas, context;
 
+  function collides(obj1, obj2) {
+    return obj1.y + obj1.width >= obj2.y;
+  }
+
+  const audio = {
+    play(audioName) {
+      const audio = new Audio(`./audio/${audioName}.wav`);
+      audio.play();
+    },
+  };
+
   // Flappy Bird
   const flappyBird = {
     x: 10,
@@ -9,7 +20,26 @@ let flappy = (function () {
     width: 36,
     speed: 0,
     gravity: 0.25,
+    jump: 4.6,
+    alreadyCollided: false,
+    init() {
+      this.x = 10;
+      this.y = 50;
+      this.speed = 0;
+      this.alreadyCollided = false;
+    },
     update() {
+      if (collides(flappyBird, floor)) {
+        if (!this.alreadyCollided) {
+          audio.play("hit-1");
+          this.alreadyCollided = true;
+        }
+
+        window.setTimeout(() => screens.activate(screens.start), 500);
+
+        return;
+      }
+
       this.speed += this.gravity;
       this.y += this.speed;
     },
@@ -29,6 +59,9 @@ let flappy = (function () {
 
       context.fill();
       context.stroke();
+    },
+    pula() {
+      this.speed = -this.jump;
     },
   };
 
@@ -87,6 +120,7 @@ let flappy = (function () {
     },
   };
 
+  // Start Screen
   const startScreen = {
     y: 120,
     title: "Welcome!",
@@ -109,6 +143,11 @@ let flappy = (function () {
   const screens = {
     active: null,
     start: {
+      init() {
+        flappyBird.init();
+        floor.init();
+        bg.init();
+      },
       draw() {
         bg.draw();
         floor.draw();
@@ -128,9 +167,14 @@ let flappy = (function () {
       update() {
         flappyBird.update();
       },
+      click() {
+        flappyBird.pula();
+      },
     },
     activate(newScreen) {
       this.active = newScreen;
+
+      if (this.active.init) this.active.init();
     },
   };
 
@@ -158,9 +202,6 @@ let flappy = (function () {
       context = canvas.getContext("2d");
 
       interaction.init();
-
-      bg.init();
-      floor.init();
 
       screens.activate(screens.start);
 
