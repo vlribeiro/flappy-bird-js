@@ -65,7 +65,7 @@ let flappy = (function () {
       this.speed += this.gravity;
       this.y += this.speed;
     },
-    draw() {
+    drawBody(frameToDraw) {
       context.beginPath();
       context.arc(
         this.x + this.diameter / 2,
@@ -81,7 +81,8 @@ let flappy = (function () {
 
       context.fill();
       context.stroke();
-
+    },
+    drawEye(frameToDraw) {
       context.beginPath();
       context.arc(
         this.x + this.diameter - 10,
@@ -97,11 +98,10 @@ let flappy = (function () {
 
       context.fill();
       context.stroke();
-
+    },
+    drawWings(frameToDraw) {
       context.beginPath();
       context.moveTo(this.x + 6, this.y + this.diameter / 2);
-
-      const frameToDraw = frameControl.currentFrame % this.wingPositions.length;
 
       context.bezierCurveTo(
         this.x + this.diameter / 2 - 4,
@@ -118,7 +118,8 @@ let flappy = (function () {
 
       context.stroke();
       context.fill();
-
+    },
+    drawPeck(frameToDraw) {
       context.beginPath();
 
       context.fillStyle = "#ed8936";
@@ -141,6 +142,14 @@ let flappy = (function () {
 
       context.fill();
       context.stroke();
+    },
+    draw() {
+      const frameToDraw = frameControl.currentFrame % this.wingPositions.length;
+
+      this.drawBody(frameToDraw);
+      this.drawEye(frameToDraw);
+      this.drawWings(frameToDraw);
+      this.drawPeck(frameToDraw);
     },
     pula() {
       this.speed = -this.jump;
